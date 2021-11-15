@@ -1,11 +1,11 @@
 import getDefaultOperate from '@/components/Table/default-operate.js';
-const createConfig = (self) => {
+const createConfig = (vm) => {
   const config = class {
-    constructor(self) {
-      this.self = self
+    constructor(vm) {
+      this.vm = vm
     }
     getHeader () {
-      const vm = this.self
+      const vm = this.vm
       const header = [
         { label: '', prop: '', type: 'selection' },
         { label: '-', prop: 'index', type: 'index' },
@@ -55,7 +55,7 @@ const createConfig = (self) => {
       ]
     }
   }
-  return new config(self)
+  return new config(vm)
 }
 export const useConfig = createConfig
 export default useConfig
