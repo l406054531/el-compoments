@@ -6,13 +6,15 @@
     <el-button type="primary"
                size="small"
                @click="handleRefresh">刷新</el-button>
-    <search-form :formElement="searchFormElement"
-                 @handleSubmitSearch="handleSubmitSearch"> </search-form>
+    <basics-form inline
+                 :formElement="searchFormElement"
+                 @handleSubmit="handleSubmit"> </basics-form>
     <el-table :data="data"
               class="table"
               ref="tableRef"
               highlight-current-row
               border
+              v-loading="loading"
               :default-sort="{prop: defaultSort.prop, order: defaultSort.order}"
               :height="height?height:620"
               :cell-style="{padding: '5px 0'}"
@@ -68,13 +70,18 @@ export default {
       default: 'center'
     },
     params: Object,
-    searchFormElement: Array
+    searchFormElement: Array,
+    loading: {
+      type: Boolean,
+      default: true
+    }
   },
   methods: {
     handleAdd () {
       this.$emit('handleAdd')
     },
     handleRefresh () {
+      this.$emit("update:loading", true)
       this.$emit('handleRefresh')
     },
     handleSortChange (column) {
@@ -83,8 +90,8 @@ export default {
     handleSelectionChange (selection) {
       this.$emit('handleSelectionChange', selection)
     },
-    handleSubmitSearch (data) {
-      this.$emit("handleSubmitSearch", data)
+    handleSubmit (data) {
+      this.$emit("handleSubmit", data)
     },
     setIndex (index) {
       if (!this.params) return index

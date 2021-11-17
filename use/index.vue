@@ -2,12 +2,12 @@
   <div class="test-view">
     <basics-table :data="tableData"
                   :header="useConfig.getHeader()"
-                  v-loading="loading"
+                  :loading.sync="loading"
                   :searchFormElement="searchFormElement"
                   :params="tableParams"
                   @handleAdd="handleAdd"
                   @handleRefresh="getDataList"
-                  @handleSubmitSearch="handleSubmitSearch">
+                  @handleSubmit="handleSubmitSearch">
     </basics-table>
     <basics-pagination :total="pageTotal"
                        @handlePageParams="handlePageParams"
@@ -35,9 +35,19 @@ export default {
       },
       pageTotal: null,
       rowData: {},
-      rules: {},
+      rules: {   //表单验证
+        username: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
+        password: [
+          { required: true, message: '请输入用户密码', trigger: 'blur' },
+          { min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur' }
+        ],
+        nickname: [{ required: true, message: '请输入用户名称', trigger: 'blur' }],
+        userRole: [{ required: true, message: '请选择角色', trigger: 'blur' }],
+      },
       dialogTitle: '',
       loading: true,
+      idKey: 'idUser',
+      httpUrl: 'user'
     }
   },
   computed: {
@@ -51,7 +61,7 @@ export default {
       return this.useConfig.getSearchElement()
     },
     useUserHttp () {
-      return useHttp('user', this)
+      return useHttp(this.httpUrl, this)
     }
   },
   mounted () {
@@ -61,7 +71,6 @@ export default {
   methods: {
     /** 获取user数据 */
     getDataList (params = this.tableParams) {
-      this.loading = true
       this.useUserHttp.getPageList(params, (result) => {
         this.tableData = result.dataList
         this.pageTotal = result.total
@@ -115,7 +124,7 @@ export default {
     },
     /**点击表格删除--异步请求 */
     handleDelete (data) {
-      this.useUserHttp.deleteData(data, 'idUser')
+      this.useUserHttp.deleteData(data, this.idKey)
     },
     /**获取所有角色 */
     findAllRoleList () {
